@@ -1,0 +1,49 @@
+{
+	"name": "olistsource",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStoragesourceOlist",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"table_name": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": {
+					"value": "@concat('olist/parquet/',dataset().table_name)",
+					"type": "Expression"
+				},
+				"fileSystem": "source"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "customer_id",
+				"type": "UTF8"
+			},
+			{
+				"name": "customer_unique_id",
+				"type": "UTF8"
+			},
+			{
+				"name": "customer_zip_code_prefix",
+				"type": "INT_32"
+			},
+			{
+				"name": "customer_city",
+				"type": "UTF8"
+			},
+			{
+				"name": "customer_state",
+				"type": "UTF8"
+			}
+		]
+	}
+}
