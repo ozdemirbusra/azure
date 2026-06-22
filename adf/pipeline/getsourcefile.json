@@ -24,10 +24,15 @@
 				"typeProperties": {
 					"source": {
 						"type": "ParquetSource",
-						"additionalColumns": {
-							"type": "Expression",
-							"value": "@createArray(json(concat('{\"name\":\"etl_insert_date\",\"value\":\"', variables('etl_date'), '\"}')))"
-						},
+						"additionalColumns": [
+							{
+								"name": "etl_insert_date",
+								"value": {
+									"value": "@formatDateTime(utcNow(),'YYYY-mm-dd HH:mm:ss')",
+									"type": "Expression"
+								}
+							}
+						],
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
@@ -130,7 +135,13 @@
 				"inputs": [
 					{
 						"referenceName": "OlistParque",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"etl_insert_date": {
+								"value": "@formatDateTime(utcNow(),'YYYY-mm-dd HH:dd:ss')",
+								"type": "Expression"
+							}
+						}
 					}
 				],
 				"outputs": [
@@ -154,11 +165,16 @@
 					}
 				],
 				"typeProperties": {
-					"variableName": "etl_date",
-					"value": {
-						"value": "@formatDateTime(utcNow(),'yyyy-MM-dd HH:mm:ss')",
-						"type": "Expression"
-					}
+					"variableName": "pipelineReturnValue",
+					"value": [
+						{
+							"key": "etl_date",
+							"value": {
+								"type": "String"
+							}
+						}
+					],
+					"setSystemVariable": true
 				}
 			}
 		],
