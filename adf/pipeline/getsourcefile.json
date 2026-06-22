@@ -1,11 +1,19 @@
 {
-	"name": "pipeline1",
+	"name": "getsourcefile",
 	"properties": {
 		"activities": [
 			{
 				"name": "gm_get_olist_tables",
+				"description": "source ıcerısındekı dosyaları kontrol etmek amacı ıle bakılıyor",
 				"type": "GetMetadata",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Set_ETL_Insert_Date",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -24,6 +32,7 @@
 					],
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
@@ -47,10 +56,68 @@
 					"items": {
 						"value": "@activity('gm_get_olist_tables').output.childItems",
 						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Copy data1",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "ParquetSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "ParquetReadSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "olistsource",
+									"type": "DatasetReference"
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "Set_ETL_Insert_Date",
+				"description": "etl date ekler",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "etl_insert_date",
+					"value": {
+						"value": "@formatDateTime(utcNow(),'yyyy-mm-dd HH:mm:ss')",
+						"type": "Expression"
 					}
 				}
 			}
 		],
+		"variables": {
+			"etl_insert_date": {
+				"type": "String"
+			}
+		},
 		"annotations": []
 	}
 }
