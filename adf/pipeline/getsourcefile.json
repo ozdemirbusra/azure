@@ -142,17 +142,6 @@
 									"type": "String",
 									"physicalType": "String"
 								}
-							},
-							{
-								"source": {
-									"name": "etl_date",
-									"type": "String"
-								},
-								"sink": {
-									"name": "etl_date",
-									"type": "String",
-									"physicalType": "String"
-								}
 							}
 						],
 						"typeConversion": true,
