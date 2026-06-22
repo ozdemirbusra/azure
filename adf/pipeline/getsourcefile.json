@@ -24,10 +24,6 @@
 				"typeProperties": {
 					"source": {
 						"type": "ParquetSource",
-						"additionalColumns": {
-							"type": "Expression",
-							"value": "@variables('etl_date')"
-						},
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
