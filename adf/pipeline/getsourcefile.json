@@ -28,7 +28,7 @@
 							{
 								"name": "etl_date3",
 								"value": {
-									"value": "@utcNow()",
+									"value": "@formatDateTime(utcNow(),'YYYY-mm-dd HH:mm:ss')",
 									"type": "Expression"
 								}
 							}
@@ -159,16 +159,11 @@
 					}
 				],
 				"typeProperties": {
-					"variableName": "pipelineReturnValue",
-					"value": [
-						{
-							"key": "etl_date",
-							"value": {
-								"type": "String"
-							}
-						}
-					],
-					"setSystemVariable": true
+					"variableName": "etl_date",
+					"value": {
+						"value": "@formatDateTime(utcNow(),'yyyy-MM-dd HH:mm:ss')",
+						"type": "Expression"
+					}
 				}
 			}
 		],

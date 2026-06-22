@@ -5,6 +5,11 @@
 			"referenceName": "AzureDataLakeStoragesourceOlist",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"etl_insert_date": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "Parquet",
 		"typeProperties": {
