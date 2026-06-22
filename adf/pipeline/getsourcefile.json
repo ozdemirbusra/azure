@@ -24,15 +24,10 @@
 				"typeProperties": {
 					"source": {
 						"type": "ParquetSource",
-						"additionalColumns": [
-							{
-								"name": "etl_date3",
-								"value": {
-									"value": "@formatDateTime(utcNow(),'YYYY-mm-dd HH:mm:ss')",
-									"type": "Expression"
-								}
-							}
-						],
+						"additionalColumns": {
+							"type": "Expression",
+							"value": "@createArray(json(concat('{\"name\":\"etl_insert_date\",\"value\":\"', variables('etl_date'), '\"}')))"
+						},
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
@@ -115,7 +110,7 @@
 							},
 							{
 								"source": {
-									"name": "etl_date3",
+									"name": "etl_insert_date",
 									"type": "String"
 								},
 								"sink": {
