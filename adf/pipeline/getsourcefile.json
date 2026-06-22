@@ -24,6 +24,20 @@
 				"typeProperties": {
 					"source": {
 						"type": "ParquetSource",
+						"additionalColumns": [
+							{
+								"name": "etl_date",
+								"value": ""
+							},
+							{
+								"name": "etl_date2",
+								"value": "$$COLUMN:"
+							},
+							{
+								"name": "loaddate",
+								"value": "$$FILEPATH"
+							}
+						],
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
@@ -71,13 +85,22 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "etl_date",
-					"value": {
-						"value": "@utcNow()",
-						"type": "Expression"
+				"userProperties": [
+					{
+						"name": "etl_date25"
 					}
+				],
+				"typeProperties": {
+					"variableName": "pipelineReturnValue",
+					"value": [
+						{
+							"key": "etl_date",
+							"value": {
+								"type": "String"
+							}
+						}
+					],
+					"setSystemVariable": true
 				}
 			}
 		],
