@@ -3,17 +3,9 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "gm_get_olist_tables",
-				"description": "source ıcerısındekı dosyaları kontrol etmek amacı ıle bakılıyor",
-				"type": "GetMetadata",
-				"dependsOn": [
-					{
-						"activity": "Set_ETL_Insert_Date",
-						"dependencyConditions": [
-							"Completed"
-						]
-					}
-				],
+				"name": "source yaz",
+				"type": "Copy",
+				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -23,98 +15,52 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"dataset": {
-						"referenceName": "olistsource",
-						"type": "DatasetReference"
+					"source": {
+						"type": "ParquetSource",
+						"additionalColumns": {
+							"type": "Expression",
+							"value": "@variables('etl_date')"
+						},
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "ParquetReadSettings"
+						}
 					},
-					"fieldList": [
-						"childItems"
-					],
-					"storeSettings": {
-						"type": "AzureBlobFSReadSettings",
-						"recursive": true,
-						"enablePartitionDiscovery": false
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
 					},
-					"formatSettings": {
-						"type": "ParquetReadSettings"
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
 					}
-				}
-			},
-			{
-				"name": "fe_loop_olist_tables",
-				"type": "ForEach",
-				"dependsOn": [
+				},
+				"inputs": [
 					{
-						"activity": "gm_get_olist_tables",
-						"dependencyConditions": [
-							"Succeeded"
-						]
+						"referenceName": "OlistParque",
+						"type": "DatasetReference"
 					}
 				],
-				"userProperties": [],
-				"typeProperties": {
-					"items": {
-						"value": "@activity('gm_get_olist_tables').output.childItems",
-						"type": "Expression"
-					},
-					"activities": [
-						{
-							"name": "Copy data1",
-							"type": "Copy",
-							"dependsOn": [],
-							"policy": {
-								"timeout": "0.12:00:00",
-								"retry": 0,
-								"retryIntervalInSeconds": 30,
-								"secureOutput": false,
-								"secureInput": false
-							},
-							"userProperties": [],
-							"typeProperties": {
-								"source": {
-									"type": "ParquetSource",
-									"storeSettings": {
-										"type": "AzureBlobFSReadSettings",
-										"recursive": true,
-										"enablePartitionDiscovery": false
-									},
-									"formatSettings": {
-										"type": "ParquetReadSettings"
-									}
-								},
-								"enableStaging": false
-							},
-							"inputs": [
-								{
-									"referenceName": "olistsource",
-									"type": "DatasetReference"
-								}
-							]
-						}
-					]
-				}
-			},
-			{
-				"name": "Set_ETL_Insert_Date",
-				"description": "etl date ekler",
-				"type": "SetVariable",
-				"dependsOn": [],
-				"policy": {
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "etl_insert_date",
-					"value": {
-						"value": "@formatDateTime(utcNow(),'yyyy-mm-dd HH:mm:ss')",
-						"type": "Expression"
+				"outputs": [
+					{
+						"referenceName": "TargetSql",
+						"type": "DatasetReference"
 					}
-				}
+				]
 			}
 		],
 		"variables": {
-			"etl_insert_date": {
+			"etl_date": {
 				"type": "String"
 			}
 		},

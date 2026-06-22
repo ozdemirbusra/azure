@@ -1,0 +1,43 @@
+{
+	"name": "TargetSql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "OlistSql",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "customer_id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "customer_unique_id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "customer_zip_code_prefix",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "customer_city",
+				"type": "nvarchar"
+			},
+			{
+				"name": "customer_state",
+				"type": "nvarchar"
+			},
+			{
+				"name": "etl_insert_date",
+				"type": "datetime2",
+				"scale": 0
+			}
+		],
+		"typeProperties": {
+			"schema": "stg",
+			"table": "customers"
+		}
+	}
+}
