@@ -3,42 +3,9 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Set variable1",
-				"type": "SetVariable",
-				"dependsOn": [],
-				"policy": {
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [
-					{
-						"name": "etl_date25"
-					}
-				],
-				"typeProperties": {
-					"variableName": "pipelineReturnValue",
-					"value": [
-						{
-							"key": "etl_date",
-							"value": {
-								"type": "String"
-							}
-						}
-					],
-					"setSystemVariable": true
-				}
-			},
-			{
 				"name": "Copy data1",
 				"type": "Copy",
-				"dependsOn": [
-					{
-						"activity": "Set variable1",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -50,15 +17,6 @@
 				"typeProperties": {
 					"source": {
 						"type": "ParquetSource",
-						"additionalColumns": [
-							{
-								"name": "etl_date",
-								"value": {
-									"value": "@formatDateTime(utcNow(),'yyyy-mm-dd')",
-									"type": "Expression"
-								}
-							}
-						],
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
