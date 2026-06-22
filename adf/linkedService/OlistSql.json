@@ -1,0 +1,17 @@
+{
+	"name": "OlistSql",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"server": "serverolist.database.windows.net",
+			"database": "sqldbolist",
+			"encrypt": "mandatory",
+			"trustServerCertificate": false,
+			"authenticationType": "SQL",
+			"userName": "sqladminuser",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQEUzQzU5ODM5LThCM0UtNDNCRS04MTNGLUI3RTgyNkREMTNBOF82OTgxZTAyZC04YWI5LTRkMTMtYWQ3My02NTQxZjNiZTI4NGYiDQp9"
+		}
+	}
+}
