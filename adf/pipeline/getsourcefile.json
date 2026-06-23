@@ -21,7 +21,7 @@
 							{
 								"name": "etl_date",
 								"value": {
-									"value": "@formatDateTime(utcNow(),'yyyy-mm-dd hh:mm:ss')",
+									"value": "@formatDateTime(utcNow(),'YYYY-MM-dd hh:mm:ss')",
 									"type": "Expression"
 								}
 							}
@@ -38,19 +38,86 @@
 						}
 					},
 					"sink": {
-						"type": "DelimitedTextSink",
-						"storeSettings": {
-							"type": "AzureBlobFSWriteSettings"
-						},
-						"formatSettings": {
-							"type": "DelimitedTextWriteSettings",
-							"quoteAllText": true,
-							"fileExtension": ".txt"
-						}
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
 					},
 					"enableStaging": false,
 					"translator": {
 						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "customer_id",
+									"type": "String",
+									"physicalType": "UTF8"
+								},
+								"sink": {
+									"name": "customer_id",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "customer_unique_id",
+									"type": "String",
+									"physicalType": "UTF8"
+								},
+								"sink": {
+									"name": "customer_unique_id",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "customer_zip_code_prefix",
+									"type": "Int32",
+									"physicalType": "INT_32"
+								},
+								"sink": {
+									"name": "customer_zip_code_prefix",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "customer_city",
+									"type": "String",
+									"physicalType": "UTF8"
+								},
+								"sink": {
+									"name": "customer_city",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "customer_state",
+									"type": "String",
+									"physicalType": "UTF8"
+								},
+								"sink": {
+									"name": "customer_state",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "etl_date",
+									"type": "String"
+								},
+								"sink": {
+									"name": "etldate",
+									"type": "DateTime",
+									"physicalType": "datetime2"
+								}
+							}
+						],
 						"typeConversion": true,
 						"typeConversionSettings": {
 							"allowDataTruncation": true,
@@ -66,7 +133,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "DelimitedText1",
+						"referenceName": "TargetSql",
 						"type": "DatasetReference"
 					}
 				]
