@@ -4,10 +4,12 @@
 	"properties": {
 		"parameters": {
 			"db_schema": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "stg."
 			},
 			"db_tablename": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "customer"
 			}
 		},
 		"annotations": [],
@@ -19,7 +21,7 @@
 			"trustServerCertificate": false,
 			"authenticationType": "SQL",
 			"userName": "sqladminuser",
-			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQEUzQzU5ODM5LThCM0UtNDNCRS04MTNGLUI3RTgyNkREMTNBOF8xMjE1MWM2Zi05OWExLTQ1MDQtODBhMS02MGIzNTBhNTIxYzEiDQp9"
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQEUzQzU5ODM5LThCM0UtNDNCRS04MTNGLUI3RTgyNkREMTNBOF9iZjQ2NjYyYi01NzY3LTQ2MjUtODFhYi1jZTI0ZTk1Nzg5ZjAiDQp9"
 		}
 	}
 }
