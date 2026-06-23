@@ -21,7 +21,7 @@
 							{
 								"name": "etl_date",
 								"value": {
-									"value": "@utcNow()",
+									"value": "@formatDateTime(utcNow(),'yyyy-mm-dd hh:mm:ss')",
 									"type": "Expression"
 								}
 							}
@@ -29,7 +29,7 @@
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
-							"wildcardFolderPath": "olist/parquet",
+							"wildcardFolderPath": "olist/parquet/customers",
 							"wildcardFileName": "*.parquet",
 							"enablePartitionDiscovery": false
 						},
