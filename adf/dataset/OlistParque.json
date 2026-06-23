@@ -6,7 +6,8 @@
 			"type": "LinkedServiceReference",
 			"parameters": {
 				"folder_path": "olist/parquet",
-				"file_name": "customers"
+				"file_name": "customers",
+				"full_path": "olist/parquet/customers"
 			}
 		},
 		"parameters": {

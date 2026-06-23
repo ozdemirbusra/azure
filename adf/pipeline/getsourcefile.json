@@ -29,8 +29,6 @@
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
-							"wildcardFolderPath": "olist/parquet/customers",
-							"wildcardFileName": "*.parquet",
 							"enablePartitionDiscovery": false
 						},
 						"formatSettings": {
@@ -146,6 +144,11 @@
 				]
 			}
 		],
+		"parameters": {
+			"folder_path": {
+				"type": "String"
+			}
+		},
 		"variables": {
 			"etl_date": {
 				"type": "String"
