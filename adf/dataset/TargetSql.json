@@ -5,6 +5,7 @@
 			"referenceName": "OlistSql",
 			"type": "LinkedServiceReference",
 			"parameters": {
+				"db_schema": "stg.",
 				"db_tablename": {
 					"value": "@concat(dataset().db_schema,'.',dataset().db_tablename)",
 					"type": "Expression"
@@ -50,6 +51,16 @@
 				"type": "datetime2",
 				"scale": 0
 			}
-		]
+		],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().db_schema",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().db_tablename",
+				"type": "Expression"
+			}
+		}
 	}
 }
