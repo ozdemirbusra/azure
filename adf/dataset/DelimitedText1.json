@@ -3,7 +3,11 @@
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureDataLakeStoragesourceOlist",
-			"type": "LinkedServiceReference"
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"folder_path": "olist/parquet",
+				"file_name": "customers"
+			}
 		},
 		"annotations": [],
 		"type": "DelimitedText",

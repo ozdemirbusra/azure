@@ -3,7 +3,23 @@
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "OlistSql",
-			"type": "LinkedServiceReference"
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"db_tablename": {
+					"value": "@concat(dataset().db_schema,'.',dataset().db_tablename)",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"db_schema": {
+				"type": "String",
+				"defaultValue": "stg."
+			},
+			"db_tablename": {
+				"type": "String",
+				"defaultValue": "customer"
+			}
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
@@ -34,10 +50,6 @@
 				"type": "datetime2",
 				"scale": 0
 			}
-		],
-		"typeProperties": {
-			"schema": "stg",
-			"table": "customers"
-		}
+		]
 	}
 }

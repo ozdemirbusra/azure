@@ -21,7 +21,7 @@
 							{
 								"name": "etl_date",
 								"value": {
-									"value": "@formatDateTime(utcNow(),'YYYY-MM-dd hh:mm:ss')",
+									"value": "@convertTimeZone(utcNow(),'UTC','Turkey Standard Time','yyyy-MM-dd HH:mm:ss')",
 									"type": "Expression"
 								}
 							}
@@ -128,13 +128,20 @@
 				"inputs": [
 					{
 						"referenceName": "OlistParque",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"folder_path": "olist/parquet"
+						}
 					}
 				],
 				"outputs": [
 					{
 						"referenceName": "TargetSql",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"db_schema": "stg.",
+							"db_tablename": "customer"
+						}
 					}
 				]
 			}
