@@ -3,15 +3,35 @@
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureDataLakeStoragesourceOlist",
-			"type": "LinkedServiceReference"
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"folder_path": "olist/parquet",
+				"file_name": "customers"
+			}
+		},
+		"parameters": {
+			"folder_path": {
+				"type": "String",
+				"defaultValue": "olist/parquet"
+			},
+			"file_name": {
+				"type": "String",
+				"defaultValue": "customers"
+			}
 		},
 		"annotations": [],
 		"type": "Parquet",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "*.parquet",
-				"folderPath": "olist/parquet/customers",
+				"fileName": {
+					"value": "@dataset().file_name",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().folder_path",
+					"type": "Expression"
+				},
 				"fileSystem": "source"
 			},
 			"compressionCodec": "snappy"
