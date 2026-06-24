@@ -5,7 +5,7 @@
 			"referenceName": "OlistSql",
 			"type": "LinkedServiceReference",
 			"parameters": {
-				"db_schema": "stg.",
+				"db_schema": "stg",
 				"db_tablename": {
 					"value": "@concat(dataset().db_schema,'.',dataset().db_tablename)",
 					"type": "Expression"
