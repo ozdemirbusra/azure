@@ -96,8 +96,7 @@
 						"referenceName": "OlistParque",
 						"type": "DatasetReference",
 						"parameters": {
-							"folder_path": "olist/parquet",
-							"file_name": "customers"
+							"folder_path": "olist/parquet"
 						}
 					},
 					"fieldList": [
