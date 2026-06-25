@@ -1,0 +1,420 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "DfExtracrTransformLoad"
+		},
+		"AzureDataLakeStoragesourceOlist_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStoragesourceOlist'"
+		},
+		"OlistSql_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'OlistSql'"
+		},
+		"AzureDataLakeStoragesourceOlist_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://sourceolist.dfs.core.windows.net/"
+		},
+		"OlistSql_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "serverolist.database.windows.net"
+		},
+		"OlistSql_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "sqldbolist"
+		},
+		"OlistSql_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "sqladminuser"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDataLakeStoragesourceOlist')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Olist için kaynaktan verı almak ıcın olusturuldu",
+				"parameters": {
+					"folder_path": {
+						"type": "string",
+						"defaultValue": "olist/parquet"
+					}
+				},
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('AzureDataLakeStoragesourceOlist_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('AzureDataLakeStoragesourceOlist_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OlistSql')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"db_schema": {
+						"type": "string",
+						"defaultValue": "stg."
+					},
+					"db_tablename": {
+						"type": "string",
+						"defaultValue": "customer"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('OlistSql_properties_typeProperties_server')]",
+					"database": "[parameters('OlistSql_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('OlistSql_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('OlistSql_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OlistParque')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStoragesourceOlist",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"folder_path": "olist/parquet"
+					}
+				},
+				"parameters": {
+					"folder_path": {
+						"type": "String",
+						"defaultValue": "olist/parquet"
+					}
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": {
+							"value": "@dataset().folder_path",
+							"type": "Expression"
+						},
+						"fileSystem": "source"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "customer_id",
+						"type": "UTF8"
+					},
+					{
+						"name": "customer_unique_id",
+						"type": "UTF8"
+					},
+					{
+						"name": "customer_zip_code_prefix",
+						"type": "INT_32"
+					},
+					{
+						"name": "customer_city",
+						"type": "UTF8"
+					},
+					{
+						"name": "customer_state",
+						"type": "UTF8"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStoragesourceOlist')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TargetSql')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "OlistSql",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"db_schema": "stg",
+						"db_tablename": {
+							"value": "@concat(dataset().db_schema,'.',dataset().db_tablename)",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"db_schema": {
+						"type": "String",
+						"defaultValue": "stg."
+					},
+					"db_tablename": {
+						"type": "String",
+						"defaultValue": "customer"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "customer_id",
+						"type": "nvarchar"
+					},
+					{
+						"name": "customer_unique_id",
+						"type": "nvarchar"
+					},
+					{
+						"name": "customer_zip_code_prefix",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "customer_city",
+						"type": "nvarchar"
+					},
+					{
+						"name": "customer_state",
+						"type": "nvarchar"
+					},
+					{
+						"name": "etl_insert_date",
+						"type": "datetime2",
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().db_schema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().db_tablename",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/OlistSql')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/getsourcefile')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "getfileinformation",
+						"description": "file sistemındekı dosyaları okur",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "OlistParque",
+								"type": "DatasetReference",
+								"parameters": {
+									"folder_path": "olist/parquet"
+								}
+							},
+							"fieldList": [
+								"childItems",
+								"itemName",
+								"lastModified",
+								"itemType"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "ParquetReadSettings"
+							}
+						}
+					},
+					{
+						"name": "foreach",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "tablofiltrele",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('tablofiltrele').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "tarrgetsql",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "ParquetSource",
+											"additionalColumns": [
+												{
+													"name": "etl_insert_date",
+													"value": {
+														"value": "@formatDateTime(utcNow(),'yyyy-MM-dd hh:mm:ss')",
+														"type": "Expression"
+													}
+												}
+											],
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true,
+												"wildcardFolderPath": {
+													"value": "@concat('olist/parquet/', item().name)",
+													"type": "Expression"
+												},
+												"wildcardFileName": "*.parquet",
+												"enablePartitionDiscovery": false
+											},
+											"formatSettings": {
+												"type": "ParquetReadSettings"
+											}
+										},
+										"sink": {
+											"type": "AzureSqlSink",
+											"writeBehavior": "insert",
+											"sqlWriterUseTableLock": false
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "OlistParque",
+											"type": "DatasetReference",
+											"parameters": {
+												"folder_path": {
+													"value": "@concat('olist/parquet/', item().name)",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "TargetSql",
+											"type": "DatasetReference",
+											"parameters": {
+												"db_schema": "stg",
+												"db_tablename": {
+													"value": "@item().name",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					},
+					{
+						"name": "tablofiltrele",
+						"type": "Filter",
+						"dependsOn": [
+							{
+								"activity": "getfileinformation",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('getfileinformation').output.childItems",
+								"type": "Expression"
+							},
+							"condition": {
+								"value": "@and(equals(activity('getfileinformation').output.itemType,'Folder'),contains(pipeline().parameters.forfiltergettablename,item().name)\n\n)",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"forfiltergettablename": {
+						"type": "array",
+						"defaultValue": [
+							"customers",
+							"orders",
+							"order_payments",
+							"order_items",
+							"products",
+							"sellers"
+						]
+					}
+				},
+				"variables": {
+					"etl_date": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/OlistParque')]",
+				"[concat(variables('factoryId'), '/datasets/TargetSql')]"
+			]
+		}
+	]
+}
