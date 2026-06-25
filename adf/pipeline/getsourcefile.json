@@ -3,82 +3,6 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy data2",
-				"type": "Copy",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"source": {
-						"type": "ParquetSource",
-						"additionalColumns": [
-							{
-								"name": "etl_date",
-								"value": {
-									"value": "@formatDateTime(utcNow(),'yyyy-MM-dd HH:mm:ss')",
-									"type": "Expression"
-								}
-							}
-						],
-						"storeSettings": {
-							"type": "AzureBlobFSReadSettings",
-							"recursive": true,
-							"wildcardFolderPath": {
-								"value": "@concat(pipeline().parameters.folder_path,'.',pipeline().parameters.file_name)",
-								"type": "Expression"
-							},
-							"wildcardFileName": "*.parquet",
-							"enablePartitionDiscovery": false
-						},
-						"formatSettings": {
-							"type": "ParquetReadSettings"
-						}
-					},
-					"sink": {
-						"type": "AzureSqlSink",
-						"writeBehavior": "insert",
-						"sqlWriterUseTableLock": false
-					},
-					"enableStaging": false,
-					"translator": {
-						"type": "TabularTranslator",
-						"typeConversion": true,
-						"typeConversionSettings": {
-							"allowDataTruncation": true,
-							"treatBooleanAsNumber": false
-						}
-					}
-				},
-				"inputs": [
-					{
-						"referenceName": "OlistParque",
-						"type": "DatasetReference",
-						"parameters": {
-							"folder_path": "olist/parquet",
-							"file_name": "customers"
-						}
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "TargetSql",
-						"type": "DatasetReference",
-						"parameters": {
-							"db_schema": "stg.",
-							"db_tablename": "customers"
-						}
-					}
-				]
-			},
-			{
 				"name": "getfileinformation",
 				"description": "file sistemındekı dosyaları okur",
 				"type": "GetMetadata",
@@ -107,6 +31,7 @@
 					],
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
@@ -117,13 +42,18 @@
 			{
 				"name": "foreach",
 				"type": "ForEach",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "tablofiltrele",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('getfileinformation').output.childItems",
+						"value": "@activity('tablofiltrele').output.value",
 						"type": "Expression"
 					},
 					"activities": [
@@ -173,79 +103,6 @@
 								"enableStaging": false,
 								"translator": {
 									"type": "TabularTranslator",
-									"mappings": [
-										{
-											"source": {
-												"name": "customer_id",
-												"type": "String",
-												"physicalType": "UTF8"
-											},
-											"sink": {
-												"name": "customer_id",
-												"type": "String",
-												"physicalType": "nvarchar"
-											}
-										},
-										{
-											"source": {
-												"name": "customer_unique_id",
-												"type": "String",
-												"physicalType": "UTF8"
-											},
-											"sink": {
-												"name": "customer_unique_id",
-												"type": "String",
-												"physicalType": "nvarchar"
-											}
-										},
-										{
-											"source": {
-												"name": "customer_zip_code_prefix",
-												"type": "Int32",
-												"physicalType": "INT_32"
-											},
-											"sink": {
-												"name": "customer_zip_code_prefix",
-												"type": "Int32",
-												"physicalType": "int"
-											}
-										},
-										{
-											"source": {
-												"name": "customer_city",
-												"type": "String",
-												"physicalType": "UTF8"
-											},
-											"sink": {
-												"name": "customer_city",
-												"type": "String",
-												"physicalType": "nvarchar"
-											}
-										},
-										{
-											"source": {
-												"name": "customer_state",
-												"type": "String",
-												"physicalType": "UTF8"
-											},
-											"sink": {
-												"name": "customer_state",
-												"type": "String",
-												"physicalType": "nvarchar"
-											}
-										},
-										{
-											"source": {
-												"name": "etl_date",
-												"type": "String"
-											},
-											"sink": {
-												"name": "etl_insert_date",
-												"type": "DateTime",
-												"physicalType": "datetime2"
-											}
-										}
-									],
 									"typeConversion": true,
 									"typeConversionSettings": {
 										"allowDataTruncation": true,

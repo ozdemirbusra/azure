@@ -12,10 +12,6 @@
 			"folder_path": {
 				"type": "String",
 				"defaultValue": "olist/parquet"
-			},
-			"file_name": {
-				"type": "String",
-				"defaultValue": "customers"
 			}
 		},
 		"annotations": [],
